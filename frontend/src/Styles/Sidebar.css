@@ -1,0 +1,30 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background-color: #1f2937; /* dark sidebar */
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-links li {
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.nav-links li.active {
+  background-color: #3b82f6; /* blue highlight */
+  border-radius: 5px;
+  padding-left: 10px;
+}
