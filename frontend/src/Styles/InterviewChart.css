@@ -1,17 +1,18 @@
-.chart-card {
+.chart-container {
   background: #ffffff;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
 }
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+.buttons-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+  
 }
+
 
 .chart-title {
   font-size: 18px;
@@ -25,6 +26,7 @@
   border-radius: 6px;
   background: #f0f0f0;
   cursor: pointer;
+
 }
 
 .toggle-buttons button.active {

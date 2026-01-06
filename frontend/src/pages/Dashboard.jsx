@@ -1,6 +1,7 @@
 import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";
 import StatsCard from"../components/layout/StatsCard";
+import Charts from "../components/layout/InterviewChart";
 import "../Styles/Dashboard.css";
 
 function Dashboard(){
@@ -16,6 +17,8 @@ function Dashboard(){
                 <StatsCard title="Pending" value={9} className="green" />
                 <StatsCard title="Rejected" value={3} className="red" />
             </div>
+
+            <Charts />
 
             </div>  
         </div>
