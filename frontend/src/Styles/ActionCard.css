@@ -1,0 +1,50 @@
+.action-container {
+  background-color: #ffffff;       
+  border-radius: 12px;            
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+  padding: 20px;
+  margin: 15px 10px;              
+  width: 250px;                   
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+
+.action-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+
+.desc {
+  font-size: 14px;
+  color: #6b7280;
+  flex-grow: 1;  
+  margin-bottom: 15px;
+}
+
+.action-btn {
+  background-color: #4f46e5; 
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #4338ca; 
+}
