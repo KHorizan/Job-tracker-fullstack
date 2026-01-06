@@ -1,0 +1,38 @@
+.stats-card{
+ width:200px;
+ padding:20px;
+ margin:15px;
+ border-radius:5px;
+ 
+}
+.stats-card:hover {
+  transform: translateY(-4px);
+
+}
+.stats-title {
+  font-size:20px;
+  font-weight: 600;
+  
+}
+.stats-value{
+  font-size:28px;
+  font-weight:400;
+  margin:3px 0px;
+  
+}
+.stats-subtitle{
+  font-size:15px;
+  opacity:0.85;
+
+}
+.purple {
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+}
+
+.green {
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+}
+
+.red {
+  background: linear-gradient(135deg, #dc2626, #f87171);
+}

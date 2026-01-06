@@ -1,0 +1,15 @@
+.dashboard-layout {
+    display:flex;
+}
+
+.stats-container{
+display:flex;
+flex-direction: row;
+flex-wrap:wrap;
+gap:20px;
+}
+.Page-title{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}

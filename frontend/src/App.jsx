@@ -1,17 +1,10 @@
-import Sidebar from "./components/layout/Sidebar";
-import Topbar from "./components/layout/Topbar";
+import Dashboard from "./pages/Dashboard";
+
 
 function App() {
   return (
-    <div className="app-layout">
-      <Sidebar />
-
-      <div className="main-area">
-        <Topbar title="Dashboard" />
-        <div className="page-content">
-          {/* Dashboard content will go here */}
-        </div>
-      </div>
+    <div className ="App-layout">
+      <Dashboard />
     </div>
   );
 }
