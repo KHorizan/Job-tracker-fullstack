@@ -17,6 +17,11 @@ password:{
     type: String,
     required:true
 
+},
+role:{
+    type:String,
+    enum:["jobseeker" ,"employer","admin"],
+    default:"jobSeeker",
 }
 },{timestamps:true});
 

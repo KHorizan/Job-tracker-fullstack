@@ -14,7 +14,8 @@ const users = await User.find().select("name,email,role,createdAt,updatedAt");
 //Update role
 const UpdateUserRole = async(req,res)=>{
     try{
-        const{userId,role} = req.body;
+        const{id} = req.params;
+        const{role} = req.body;
 
       const allowedroles = ["jobseeker","employer","admin"];
       if(!allowedroles.includes(role)) {
