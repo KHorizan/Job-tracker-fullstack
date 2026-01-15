@@ -1,0 +1,32 @@
+.layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+
+}
+
+.main {
+  flex: 1;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  /*max-width: 100%; */
+  min-height: 100vh;      /* ensures it fills screen */
+  overflow-y: auto;       /* THIS enables scrolling inside main */
+  overflow-x: hidden;
+  
+}
+
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+@media (min-width: 768px) {
+  .main.sidebar-open {
+    margin-left: 250px;
+  }
+}
