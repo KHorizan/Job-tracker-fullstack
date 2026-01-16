@@ -17,11 +17,6 @@ company:{
   required:true,
   trim:true
 },
-status:{
-  type:String,
-  enum:["pending","interview","declined"],
-  default:"pending"
-},
 jobType:{
   type:String,
   enum:["part-time","full-time","remote"],
