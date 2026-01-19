@@ -6,6 +6,6 @@ const authMiddleware = require("../middleware/authMiddleware");
 const authorize= require("../middleware/roleMiddleware");
 
 router.get("/users",authMiddleware,authorize("admin"),getAllUsers);
-router.put("/users/role",authMiddleware,authorize("admin"),UpdateUserRole);
+router.put("/users/:id/role",authMiddleware,authorize("admin"),UpdateUserRole);
 
 module.exports = router;
