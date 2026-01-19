@@ -21,7 +21,7 @@ password:{
 role:{
     type:String,
     enum:["jobseeker" ,"employer","admin"],
-    default:"jobSeeker",
+    default:"jobseeker",
 }
 },{timestamps:true});
 
