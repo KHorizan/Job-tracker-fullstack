@@ -2,7 +2,7 @@
 jobseeker:[
     {name:"Dashboard",link:"/dashboard"},
     {name:"My Applications",link:"/applications"},
-    {name:"Search",link:"/search"}
+    {name:"Browse Jobs",link:"/jobs"},
    
     
 ],
