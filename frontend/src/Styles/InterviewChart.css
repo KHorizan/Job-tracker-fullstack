@@ -1,16 +1,17 @@
 .chart-container {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-top: 20px;
+  width: 100%;
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
 }
-.buttons-container{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-  
+
+
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .chart-title {
@@ -18,17 +19,36 @@
   font-weight: 600;
 }
 
-.toggle-buttons button {
-  margin-left: 10px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background: #f0f0f0;
-  cursor: pointer;
 
+.toggle-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-buttons button {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
 }
 
 .toggle-buttons button.active {
-  background: #4f46e5;
+  background: #7c3aed;
   color: white;
+}
+
+
+.chart-wrapper {
+  width: 100%;
+  height: 350px;
+  margin-top: 16px;
+}
+
+
+@media (max-width: 768px) {
+  .chart-wrapper {
+    height: 260px;
+  }
 }
