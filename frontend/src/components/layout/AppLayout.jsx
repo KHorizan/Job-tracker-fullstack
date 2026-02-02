@@ -1,16 +1,23 @@
 import{useState ,useEffect} from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from"../layout/Sidebar";
 import Topbar from"../layout/Topbar";
 import {useAuth} from"../../context/AuthContext";
 import "../../Styles/AppLayout.css";
 
 function AppLayout(){
+    const location = useLocation();
     const{user} = useAuth(); 
     const[isMobile,setIsMobile] = useState(false);
     const[isOpen,setIsOpen] = useState(true);
 
-
+const getPageTitle=()=>{
+      if (location.pathname === "/dashboard") return "Dashboard";
+     if (location.pathname === "/jobs") return "Browse Jobs";
+     if(location.pathname==="/applications") return "My Applications";
+     if (location.pathname.startsWith("/jobs/")) return "Job Details";
+      return "";
+}
  useEffect(()=>{
     const handleResize=()=>{
         if(window.innerWidth<760){
@@ -40,7 +47,7 @@ function AppLayout(){
     
 <div className={`main ${isOpen && !isMobile ? "sidebar-open" : ""}`}>
         <Topbar 
-        title="Dashboard"
+        title={getPageTitle()}
         username= {user?.name||"User"}
         toggleSidebar={()=>setIsOpen(!isOpen)}/>
         <Outlet />
