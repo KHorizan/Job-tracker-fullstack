@@ -1,0 +1,24 @@
+.badge-container {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+/* Status colors */
+.badge-container.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-container.interview {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.badge-container.rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
