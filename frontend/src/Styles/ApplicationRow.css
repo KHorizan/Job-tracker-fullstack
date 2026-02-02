@@ -1,0 +1,62 @@
+.app-row button {
+  margin-right: 8px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+.app-row .view-btn {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.app-row .view-btn:hover {
+  background-color: #4338ca;
+}
+
+.app-row .edit-btn {
+  background-color: white;
+  color: #4f46e5;
+  border: 1px solid #4f46e5;
+}
+
+.app-row .edit-btn:hover {
+  background-color: #eef2ff;
+}
+
+.app-row .delete-btn {
+  background-color: white;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+}
+
+.app-row .delete-btn:hover {
+  background-color: #fee2e2;
+}
+.app-row button:hover {
+  opacity: 0.85;
+}
+
+/* Full variant */
+.app-row.full button {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.app-row.compact button {
+  padding: 4px 10px;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+
+@media (max-width: 480px) {
+  .app-row button {
+    padding: 4px 10px;
+    font-size: 12px;
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+}
