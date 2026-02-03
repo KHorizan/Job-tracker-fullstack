@@ -17,11 +17,32 @@ company:{
   required:true,
   trim:true
 },
+location: {
+  type: String,
+  required: true,
+  trim: true,
+},
 jobType:{
   type:String,
   enum:["part-time","full-time","remote"],
   default:"full-time"
-}
+},
+description: {
+  type: String,
+  default: "",
+  },
+ skills: {
+  type: [String],
+  default: [],
+  },
+  experience: {
+  type: String,
+  default: "",
+  },
+  salary: {
+  type: String,
+  default: "",
+  },
 },{timestamps:true});
 
 module.exports = mongoose.model("Job",JobSchema);
