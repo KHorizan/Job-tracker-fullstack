@@ -26,13 +26,25 @@ const register = async(req,res)=>{
     });
 
     //generate token
-    const token = jwt.sign(
-        {id:user._id,role:user.role},
-        process.env.JWT_SECRET,
-        {expiresIn:"7d"}
-    );
+const accessToken = jwt.sign(
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: "15m" }
+);
 
-  res.status(201).json({user:{id:user._id,name:user.name,email:user.email,role:user.role},token});
+const refreshToken = jwt.sign(
+  { id: user._id },
+  process.env.REFRESH_SECRET,
+  { expiresIn: "7d" }
+);
+
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  sameSite: "strict",
+  secure: false,
+});
+
+  res.status(201).json({user:{id:user._id,name:user.name,email:user.email,role:user.role},token:accessToken});
 } catch(err){
   console.error("REGISTER ERROR:", err); 
    res.status(500).json({ message: "Server error", error: err.message });
@@ -53,15 +65,47 @@ const isMatch = await bcrypt.compare(password,user.password);
 if(!isMatch) return  res.status(400).json({ message: "Invalid credentials" });
 
 //generate token
-const token = jwt.sign(
-    {id:user._id,role:user.role},
-    process.env.JWT_SECRET,
-    {expiresIn:"7d"}
+const accessToken = jwt.sign(
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: "15m" }
 );
-res.status(200).json({user:{id:user._id,name:user.name,email:user.email,role:user.role},token});
+
+const refreshToken = jwt.sign(
+  { id: user._id },
+  process.env.REFRESH_SECRET,
+  { expiresIn: "7d" }
+);
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: false, // true in production (HTTPS)
+});
+
+res.status(200).json({user:{id:user._id,name:user.name,email:user.email,role:user.role},token:accessToken});
 }catch(err){
 res.status(500).json({ message: "Server error", error: err.message });
 }
+};
+
+const refreshToken = (req, res) => {
+  const token = req.cookies.refreshToken;
+
+  if (!token) return res.sendStatus(401);
+
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.json({ token: newAccessToken });
+  } catch {
+    res.sendStatus(403);
+  }
 };
 
 
@@ -131,4 +175,4 @@ res.status(500).json({ message: "Server error", error: err.message });
     }
   };
 
-  module.exports = {register,login,getUser,updateUser,deleteUser};
+  module.exports = {register,login,refreshToken,getUser,updateUser,deleteUser};
