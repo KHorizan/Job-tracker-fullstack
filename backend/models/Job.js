@@ -43,6 +43,11 @@ description: {
   type: String,
   default: "",
   },
+  status: {
+  type: String,
+  enum: ["active", "closed"],
+  default: "active"
+},
 },{timestamps:true});
 
 module.exports = mongoose.model("Job",JobSchema);
