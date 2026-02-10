@@ -1,0 +1,44 @@
+.filters-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.filters-container input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.filters-container select {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+}
+.filters-container input,
+.filters-container select {
+  flex: 1 1 150px; 
+  min-width: 120px;
+}
+.reset-btn{
+  flex: 1 1 100px; 
+  color:white;
+  background-color:#3b82f6 ;
+  border-radius:4px;
+  padding:8px  8px;
+  cursor:pointer;
+  margin:5px 3px;
+  border: 1px solid black;
+  transition: background-color 0.2s;
+}
+.reset-btn:hover {
+  background-color: #2563eb; 
+}
