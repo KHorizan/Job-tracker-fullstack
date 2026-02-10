@@ -1,0 +1,104 @@
+.browse-jobs-page {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+.jobs-status {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 16px;
+  color: #374151;
+}
+
+.jobs-status.empty {
+  margin: 5% 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pagination button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #2563eb; 
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.pagination button:hover:not(:disabled) {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  color: #9ca3af; 
+}
+.pagination span {
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+  margin: 0 8px;
+}
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.job-card-actions {
+  display: flex;
+  gap: 12px;              
+  margin-top: 14px;
+}
+
+.job-card-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apply-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+}
+
+.apply-btn:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.apply-btn:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.details-btn {
+  background-color: #ffffff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.details-btn:hover {
+  background-color: #eff6ff;
+}
