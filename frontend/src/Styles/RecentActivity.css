@@ -1,0 +1,71 @@
+/* Single card container for recent activities */
+.activities-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  max-width: 600px; /* reduced width */
+  margin: 0 auto;   /* center horizontally */
+}
+
+/* Heading */
+.activities-container h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #222;
+  text-align: left;
+}
+
+/* Each activity item */
+.acitivity-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.acitivity-item:last-child {
+  border-bottom: none;
+}
+
+/* Subtle colored icons */
+.acitivity-item svg {
+  font-size: 22px;
+  flex-shrink: 0;
+  color: #5c6bc0; /* subtle soft blue/purple */
+}
+
+/* Text container */
+.acitivity-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Activity text */
+.acitivity-item p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Timestamp */
+.acitivity-item small {
+  color: #777;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .activities-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+  
+  .acitivity-item p {
+    font-size: 14px;
+  }
+}
