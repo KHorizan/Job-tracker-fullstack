@@ -6,6 +6,9 @@ jobseeker:[
    
     
 ],
+employer:[
+    {name:"Dashboard",link:"/empdashboard"}
+],
 admin:[
     {name:"RoleManagement" ,link:"/role"},
     {name:"Dashboard",link:"/dashbaord"},
