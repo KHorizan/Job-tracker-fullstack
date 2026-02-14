@@ -22,6 +22,9 @@ const ApplicationSchema = mongoose.Schema(
             type:Date,
             default:Date.now,
         },
+        statusUpdatedAt: {
+      type: Date
+   },
     },
     {timestamps:true}
 );
