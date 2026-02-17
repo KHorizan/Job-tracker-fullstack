@@ -3,11 +3,15 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
+const { connectRedis } = require("./config/redis");
+const serverTimeLogger = require("./middleware/serverTimeLogger");
 
 dotenv.config();
+connectRedis();
 
 connectDB();
 const app = express();
+app.use(serverTimeLogger);
 
 //Middleware
 app.use(cors());
