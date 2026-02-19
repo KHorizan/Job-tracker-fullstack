@@ -1,27 +1,41 @@
 const mongoose = require("mongoose");
 const Application = require("../models/Application");
 const Job = require("../models/Job");
+const { getCache, setCache } = require("../utils/cache");
+const {invalidateEmployerDashboardCache,invalidateUserApplicationsCache} = require("../utils/cacheInvalidation");
 
-const getUserApplication= async(req,res)=>{
-try{
- const userId = req.user.id;
- 
-  const limit = Number(req.query.limit)||0;
-  const page = Number(req.query.page)||1;
-  const skip = (page - 1) * limit;
+// Allowed application statuses
+const APPLICATION_STATUSES = ["pending", "interview", "rejected"];
 
-  // Base filter
-    const filter = { user: userId };
+// Helper for server errors
+const handleServerError = (res, err, message = "Server error") => {
+  console.error(message, err.message);
+  res.status(500).json({ message, error: err.message });
+};
+
+// Get paginated applications of logged-in user with caching
+const getUserApplication = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 30);
+    const skip = (page - 1) * limit;
+
+    const cacheKey = `user_apps_${userId}_${page}_${limit}`;
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
+
+    const filter = { user: userId, isDeleted: false };
     const totalApplications = await Application.countDocuments(filter);
 
-
-  const applications = await Application.find(filter)
+    const applications = await Application.find(filter)
       .populate("job", "title company jobType")
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
-    res.status(200).json({
+    const result = {
       applications,
       pagination: {
         total: totalApplications,
@@ -31,159 +45,140 @@ try{
         hasNextPage: page * limit < totalApplications,
         hasPrevPage: page > 1,
       },
-    });
+    };
+
+    await setCache(cacheKey, result, 60);
+    res.status(200).json(result);
   } catch (err) {
-    console.log("Headers received:", req.headers);
-   console.log("Authorization header:", req.headers.authorization);
-    res.status(500).json({ message: "Failed to fetch applications" });
+    handleServerError(res, err, "Failed to fetch applications");
   }
 };
 
-const getUserApplicationStats = async(req,res)=>{
-    try{
-   const userId = req.user.id;
-  
-   const stats = await Application.aggregate([
-   {$match:{user:new mongoose.Types.ObjectId(userId)}},
-   {
-    $group:{
-        _id:"$status",
-        count:{$sum:1},
+// Get stats of user's applications
+const getUserApplicationStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cacheKey = `user_app_stats_${userId}`;
 
-    },
-   },
-   ]);
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
 
-   const formatted={
-    total:0,
-    pending:0,
-    interview:0,
-    rejected:0
-   }
+    const stats = await Application.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId), isDeleted: false } },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]);
 
-stats.forEach(s=>{
-    formatted[s._id] = s.count;
-    formatted.total += s.count;
-});
+    const formatted = { total: 0, pending: 0, interview: 0, rejected: 0 };
+    stats.forEach((s) => {
+      if (APPLICATION_STATUSES.includes(s._id)) {
+        formatted[s._id] = s.count;
+        formatted.total += s.count;
+      }
+    });
 
-  //returning in order.
-   const orderedStats = {
-      total: formatted.total,
-      pending: formatted.pending,
-      interview: formatted.interview,
-      rejected: formatted.rejected,
-    };
-
-
-  res.status(200).json(orderedStats);
-    }catch(err){
-   res.status(500).json({ message: "Server error" });
-    }
+    await setCache(cacheKey, formatted, 60);
+    res.status(200).json(formatted);
+  } catch (err) {
+    handleServerError(res, err, "Failed to fetch application stats");
+  }
 };
 
+// Get monthly stats for charting
 const getUserMonthlyStats = async (req, res) => {
   try {
     const userId = req.user.id;
+    const cacheKey = `user_monthly_stats_${userId}`;
+
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
 
     const monthlyStats = await Application.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(userId), isDeleted: false } },
       {
         $group: {
-          _id: { month: { $month: "$appliedOn" }, year: { $year: "$appliedOn" } },
-          pending: {
-            $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] }
-          },
-          interview: {
-            $sum: { $cond: [{ $eq: ["$status", "interview"] }, 1, 0] }
-          },
-          rejected: {
-            $sum: { $cond: [{ $eq: ["$status", "rejected"] }, 1, 0] }
-          }
-        }
+          _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+          pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
+          interview: { $sum: { $cond: [{ $eq: ["$status", "interview"] }, 1, 0] } },
+          rejected: { $sum: { $cond: [{ $eq: ["$status", "rejected"] }, 1, 0] } },
+        },
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } }
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
     ]);
 
-   const formatted = monthlyStats.map(item => {
-      const monthNames = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-      ];
-      return {
-        month: monthNames[item._id.month - 1],
-        attended: item.interview,
-        pending: item.pending,
-        rejected: item.rejected
-      };
-    });
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const formatted = monthlyStats.map((item) => ({
+      month: monthNames[item._id.month - 1],
+      pending: item.pending,
+      interview: item.interview,
+      rejected: item.rejected,
+    }));
 
+    await setCache(cacheKey, formatted, 60);
     res.status(200).json(formatted);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    handleServerError(res, err, "Failed to fetch monthly stats");
   }
 };
 
-const applyToJob = async(req,res)=>{
+// Apply to a Job
+const applyToJob = async (req, res) => {
   try {
     const userId = req.user.id;
     const { jobId } = req.params;
 
-    // 1. Check job exists
     const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
-    }
-     const alreadyApplied = await Application.findOne({
-      user: userId,
-      job: jobId,
-    });
+    if (!job) return res.status(404).json({ message: "Job not found" });
 
-    if (alreadyApplied) {
-      return res.status(400).json({ message: "Already applied to this job" });
-    }
+    const alreadyApplied = await Application.findOne({ user: userId, job: jobId }).lean();
+    if (alreadyApplied) return res.status(400).json({ message: "Already applied to this job" });
 
-    // 3. Create application
     const application = await Application.create({
       user: userId,
       job: jobId,
       status: "pending",
     });
+
+    await invalidateUserApplicationsCache(userId);
+    await invalidateEmployerDashboardCache(job.createdBy);
+
     res.status(201).json({ message: "Applied successfully", application });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    handleServerError(res, err, "Failed to apply to job");
   }
 };
 
-const updateApplicationStatus = async(req,res)=>{
-  try{
-    const {status} = req.body;
-    const {id} = req.params;
+// Update application status (for employers/admin)
+const updateApplicationStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!APPLICATION_STATUSES.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
 
     const application = await Application.findById(id);
-    if(!application){
-      return res.status(404).json({message:"Application Not Found"});
-    }
-     //update status
+    if (!application) return res.status(404).json({ message: "Application not found" });
+
     application.status = status;
     application.statusUpdatedAt = new Date();
-
     await application.save();
 
-    res.status(200).json({message:"Application status changed successfully"});
+    await invalidateUserApplicationsCache(application.user.toString());
 
-  }catch(err){
-    res.status(500).json({message:"Unable to update application Status."});
+    const job = await Job.findById(application.job);
+    if (job) await invalidateEmployerDashboardCache(job.createdBy);
+
+    res.status(200).json({ message: "Application status updated successfully" });
+  } catch (err) {
+    handleServerError(res, err, "Failed to update application status");
   }
-}
-module.exports ={ getUserApplication,getUserApplicationStats,getUserMonthlyStats,applyToJob,updateApplicationStatus };
+};
 
-  
-
-
-
-
-
-
-
-
+module.exports = {
+  getUserApplication,
+  getUserApplicationStats,
+  getUserMonthlyStats,
+  applyToJob,
+  updateApplicationStatus,
+};
