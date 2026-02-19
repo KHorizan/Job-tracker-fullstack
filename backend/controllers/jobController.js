@@ -197,6 +197,7 @@ const browseJobs = async (req, res) => {
         job: { $in: result.jobs.map((j) => j._id) },
       }).select("job");
 
+      //set instead of arrays beacause it has O(1) lookup time.
       const appliedJobIds = new Set(
         applications.map((app) => app.job.toString())
       );

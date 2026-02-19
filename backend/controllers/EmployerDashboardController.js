@@ -1,221 +1,146 @@
 const mongoose = require("mongoose");
 const Application = require("../models/Application");
 const Job = require("../models/Job");
-const User = require("../models/User");
+const Activity = require("../models/Activity");
+const { getCache,setCache } = require("../utils/cache");
 
-const getEmployerDashboardStats = async(req,res)=>{
-    try{
-    
+// DASHBOARD STATS
+const getEmployerDashboardStats = async (req, res) => {
+  try {
     const employerId = req.user.id;
-    const jobs = await Job.find({createdBy:employerId},"_id status");
+    const cacheKey = `employer_stats_${employerId}`;
 
-    const totalJobs = jobs.length;
-    const activeJobs = jobs.filter(job=>job.status === "active").length;
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
+    const last7days = new Date();
+    last7days.setDate(last7days.getDate() - 7);
 
-   const jobIds = jobs.map(job=>job._id);
-   const totalApplications = await Application.countDocuments({job:{$in:jobIds}});
-  
-   const last7days = new Date();
-    last7days.setDate(last7days.getDate()-7);
+    
+  const [totalJobs,activeJobs,totalApplications,recentApplications,] = await Promise.all([
+  Job.countDocuments({ createdBy: employerId }),
+  Job.countDocuments({ createdBy: employerId, status: "active" }),
+  Application.countDocuments({ employer: employerId ,isDeleted:false}),
+  Application.countDocuments({
+    employer: employerId,
+   createdAt: { $gte: last7days },
+  }),
+  ]);
 
-   const recentApplications = await Application.countDocuments({
-    job:{$in:jobIds}
-    ,createdAt:{$gte:last7days}
- });
 
-    res.status(200).json({
-        totalJobs,
-        activeJobs,
-        totalApplications,
-        recentApplications
-    })
-  }catch(err){
-    res.status(500).json({message:"Server error"});
-}
+    const result = { totalJobs, activeJobs, totalApplications, recentApplications };
+    await setCache(cacheKey, result, 60); // cache for 60s
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
 
-const getApplicationsOverTime = async(req,res)=>{
-    try{
-       const employerId = req.user.id;
 
-        const jobs = await Job.find({createdBy:employerId},"_id");
-        const jobIds = jobs.map(job=>job._id);
+// Applications over time 
+const getApplicationsOverTime = async (req, res) => {
+  try {
+    const employerId = req.user.id;
+    const cacheKey = `applications_over_time_${employerId}`;
 
-        const applications = await Application.aggregate([
-            {$match: {job:{$in:jobIds}}},
-            {$group:{
-               _id: {
-                $dateToString:{
-                    format:"%Y-%m-%d",
-                    date:"$createdAt"
-                }
-               },
-             count:{$sum:1}
-            }},
-            
-            {$sort:{_id:1}}
-        ]);
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
 
-        const data = applications.map(d=>({
-            date:d._id,
-            count:d.count
-        }));
+    const applications = await Application.aggregate([
+      {  $match: {
+      employer: new mongoose.Types.ObjectId(employerId),
+      isDeleted: false,
+    },
+    },
+      {
+        $group: {
+          _id: { 
+          $dateToString: { 
+        format: "%Y-%m-%d", date: "$createdAt" } },
+        count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id": 1 } },
+    ]);
 
+    const data = applications.map(a => ({ date: a._id, count: a.count }));
+    await setCache(cacheKey, data, 60); // cache for 60s
     res.status(200).json(data);
- }catch(err){
-        res.status(500).json({message:"server error"});
-    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
 
-const getRecentActivity = async(req,res)=>{
-    try{
-  
-    const page = parseInt(req.query.page)||1;
-    const limit = parseInt(req.query.limit)||7;
-    const skip = (page-1)*limit;
-
+//RECENT ACTIVITY
+const getRecentActivity = async (req, res) => {
+  try {
     const employerId = req.user.id;
+    const cacheKey = `employer:${employerId}:recent-activity`;
 
-    const jobs = await Job.find({createdBy:employerId});
-    const jobIds = jobs.map(job=>job._id);
-
-    //New job posted
-     const jobActivites = jobs.map(job=>({
-        type:"job-posted",
-        jobTitle :job.title,
-        timestamp :job.createdAt
-    }));
-
-
-    //new applications 
-   const applications = await Application.find({
-            job:{$in:jobIds}})
-            .populate("user","name")
-            .populate("job","title")
-            .sort({createdAt:-1})
-
-    const applicationActivities = applications.map(app=>({
-          type:"new_application",
-          candidate : app.user.name,
-          jobTitle : app.job.title,
-          timestamp :app.createdAt
-    }));
-
-
-  //status Changes 
-  const statusChanges =  await Application.find({
-    job:{$in:jobIds},
-    statusUpdatedAt:{$exists:true}
-   })
-    .populate("user","name")
-    .populate("job","title")
-    .sort({statusUpdatedAt:-1})
-    
- const statusActivities = statusChanges.map(app=>({
-    type:"status_changed",
-    candidate:app.user.name,
-    jobTitle:app.job.title,
-    status:app.status,
-    timestamp:app.statusUpdatedAt
- }));
-                       
- //combine all
- const allActivities = [
-    ...jobActivites,
-    ...applicationActivities,
-    ...statusActivities
- ];
-
- //sort 
- allActivities.sort(
-      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-    );
-    
-//pagination after sorting
-const paginatedActivities = allActivities.slice(skip, skip + limit);
- res.status(200).json({
-      total: allActivities.length,
-      page,
-      limit,
-      activities: paginatedActivities
-    });
-}catch(err){
-   res.status(500).json({message:"server error"});   
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.status(200).json(JSON.parse(cached));
     }
+
+    //  Fetch From Activity Collection
+    const activities = await Activity.find({
+      employer: employerId,
+      isDeleted: false,
+    })
+      .sort({ createdAt: -1 })
+      .limit(7)
+      .lean();
+
+    await setCache(cacheKey, activities, 60);
+
+    res.status(200).json(activities);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+   
+
+//Top candidates 
+
+const getTopCandidates = async (req, res) => {
+  try {
+    const employerId = req.user.id;
+    const cacheKey = `employer:${employerId}:top-candidates`;
+
+    const cached = await getCache(cacheKey);
+    if (cached) return res.status(200).json(JSON.parse(cached));
+
+    const applications = await Application.find({
+      employer: employerId,
+      status: "interview",
+    })
+      .populate("user", "name email")
+      .populate("job", "title")
+      .sort({ statusUpdatedAt: -1 })
+      .limit(5)
+      .lean();
+
+    const response = {
+      count: applications.length,
+      candidates: applications.map((app) => ({
+        candidate: app.user?.name,
+        email: app.user?.email,
+        jobTitle: app.job?.title,
+        status: app.status,
+      })),
+    };
+
+    await setCache(cacheKey, response,60);
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
-const getTopCandidates = async(req,res)=>{
-    try{
 
- const employerId = req.user.id;
- const jobs = await Job.find({createdBy:employerId}).select("_id");
- const jobIds = jobs.map(job=>job._id);
-
-const applications = await Application.find({
-    job:{$in:jobIds},
-    status:{$in:["interview"]}
-})
- .populate("user","name email")
- .populate("job","title")
- .sort({statusUpdatedAt:-1})
- .limit(5); 
-
-const topcandidates = applications.map(app=>({
-    candidate : app.user.name,
-    email : app.user.email,
-    jobTitle:app.job.title,
-    status:app.status
-}));
-
-res.status(200).json({
-    count:topcandidates.length,
-    candidates:topcandidates
-
-});
-
-}catch(err){
-        res.status(500).json({message:"Unable"})
-    }
+module.exports = {
+  getEmployerDashboardStats,
+  getApplicationsOverTime,
+  getRecentActivity,
+  getTopCandidates,
 };
-
-module.exports={getEmployerDashboardStats,getApplicationsOverTime,getRecentActivity,getTopCandidates};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
