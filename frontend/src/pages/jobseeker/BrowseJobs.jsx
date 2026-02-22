@@ -7,10 +7,11 @@ import "../../Styles/BrowseJobs.css";
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [search, setSearch] = useState("");
-  const [location, setLocation] = useState("");
-  const [jobType, setJobType] = useState("");
+  const [filters, setFilters] = useState({
+  search: "",
+  location: "",
+  jobType: ""
+  });
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -19,7 +20,7 @@ function BrowseJobs() {
     try {
       setLoading(true);
       const res = await api.get("/jobs/browse", {
-        params: { search, location, jobType, page, limit: 10 },
+        params: { ...filters, page, limit: 10 },
       });
       setJobs(res.data?.jobs || []);
       setTotalPages(res.data?.totalPages || 1);
@@ -34,11 +35,8 @@ function BrowseJobs() {
 
   useEffect(() => {
     fetchJobs();
-  }, [search, location, jobType, page]);
+  }, [filters,page]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [search, location, jobType]);
 
   const handleApply = (jobId) => {
     setJobs((prevJobs) =>
@@ -48,16 +46,33 @@ function BrowseJobs() {
     );
   };
 
+  const filterConfig = [
+  {
+    type: "input",
+    name: "search",
+    placeholder: "Search Jobs..."
+  },
+  {
+    type: "select",
+    name: "location",
+    defaultOption: "All Locations",
+    options: ["Remote"]
+  },
+  {
+    type: "select",
+    name: "jobType",
+    defaultOption: "All Types",
+    options: ["Part-Time", "Full-Time"]
+  }
+];
+
   return (
     <div className="browse-jobs-page">
       <JobFilters
-        search={search}
-        setSearch={setSearch}
-        location={location}
-        setLocation={setLocation}
-        jobType={jobType}
-        setJobType={setJobType}
-        setPage={setPage}
+      filters={filters}
+     setFilters={setFilters}
+     config={filterConfig}
+      setPage={setPage}
       />
 
       {loading && <p className="jobs-status">Loading jobs...</p>}

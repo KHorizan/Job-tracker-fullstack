@@ -25,6 +25,13 @@ const[applications,setApplications] = useState([]);
   const[loading,setLoading] = useState(true);
 
 
+  const COLUMN_MAP_DASHBOARD ={
+   "Company": "job.company",
+   "Job Title": "job.title",
+    "Status": "status",
+    "Applied On": "appliedOn",           
+  };
+
   useEffect(()=>{
      const fetchApplications =async()=>{
       try{
@@ -117,8 +124,11 @@ const { total = 0, pending = 0, interview = 0, rejected = 0 } = stats;
     <>
       <ApplicationTableBase columns={["Company", "Job Title", "Status", "Applied On"]}>
         {applications.slice(0, 10).map((app) => (
-         <ApplicationRow key={app._id} application={app} 
+         <ApplicationRow
+          key={app._id} 
+          application={app} 
           columns={["Company", "Job Title", "Status", "Applied On"]}
+          columnMap={COLUMN_MAP_DASHBOARD}
           variant="compact" />
         ))}
       </ApplicationTableBase>
