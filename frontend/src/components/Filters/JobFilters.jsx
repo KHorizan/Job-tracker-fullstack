@@ -1,37 +1,71 @@
 import "../../Styles/JobFilters.css";
-function JobFilters({
-  search,
-  setSearch,
-  location,
-  setLocation,
-  jobType,
-  setJobType,
-  setPage
-}){
-const resetFilters =()=>{
-  setSearch("");
-    setLocation("");
-    setJobType("");
-    setPage(1); 
-};
 
-  return(
-    <div className="filters-container">
-        <input type="text" placeholder="Search Jobs.." value={search} onChange={(e)=>setSearch(e.target.value)}/>
-     
-     <select value={location} onChange={(e)=>setLocation(e.target.value)}>
-        <option value="">All Locations</option>
-        <option value="Remote">Remote</option>
-     </select>
+function JobFilters({ filters, setFilters, config, setPage }) {
 
-     <select value={jobType} onChange={(e)=>setJobType(e.target.value)}>
-        <option value="">All Types</option>
-        <option value="Part-Time">Part-Time</option>
-        <option value="Full-Time">Full-Time</option>
-     </select>
+  const handleChange = (name, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (setPage) setPage(1);
+  };
 
-     <button className="reset-btn" onClick={resetFilters}>Reset Filters</button>
+  const resetFilters = () => {
+    const resetValues = {};
+    config.forEach(field => {
+      resetValues[field.name] = "";
+    });
+
+    setFilters(resetValues);
+    if (setPage) setPage(1);
+  };
+
+  return (
+    <div className="filters-container"> 
+
+      {config.map(field => {
+
+        if (field.type === "input") {
+          return (
+            <input
+              key={field.name}
+              className="filter-input"
+              type="text"
+              placeholder={field.placeholder}
+              value={filters[field.name] || ""}
+              onChange={(e) =>handleChange(field.name, e.target.value)}
+            />
+          );
+        }
+
+        if (field.type === "select") {
+          return (
+            <select
+              key={field.name}
+               className="filter-input"
+              value={filters[field.name] || ""}
+              onChange={(e) =>handleChange(field.name, e.target.value)}
+            >
+              <option value="">{field.defaultOption}</option>
+
+              {field.options.map(opt => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          );
+        }
+
+        return null;
+      })}
+
+      <button className="reset-btn" onClick={resetFilters}>
+        Reset Filters
+      </button>
+
     </div>
   );
 }
+
 export default JobFilters;
