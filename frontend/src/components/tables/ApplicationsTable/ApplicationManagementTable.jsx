@@ -2,14 +2,43 @@ import React,{ useState } from "react";
 import ApplicationTableBase from "../ApplicationsTable/ApplicationTableBase";
 import "../../../Styles/ApplicationManagementTable.css";
 
-const ApplicationManagementTable = ({ applications }) => {
+const ApplicationManagementTable = ({ applications,updateApplication }) => {
   const [openId, setOpenId] = useState(null);
+  const [apps, setApps] = useState(applications);
 
   const columns = ["Candidate", "Position", "Applied On", "Status", "Actions"];
 
   const toggleRow = (id) => {
     setOpenId(openId === id ? null : id);
   };
+
+  const handleChangeStatus = (id, newStatus) => {
+    updateApplication(id, { status: newStatus }).then(() => {
+      setApps((prev) =>
+        prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
+      );
+    });
+  };
+
+
+  const handleShortlist = (id) => {
+    updateApplication(id, { shortlisted: true }).then(() => {
+      setApps((prev) =>
+        prev.map((app) => (app.id === id ? { ...app, shortlisted: true } : app))
+      );
+    });
+  };
+
+  
+  const handleReject = (id) => {
+    updateApplication(id, { status: "Rejected" }).then(() => {
+      setApps((prev) =>
+        prev.map((app) => (app.id === id ? { ...app, status: "Rejected" } : app))
+      );
+    });
+  };
+  
+  
 
   return (
     <ApplicationTableBase columns={columns}>
@@ -25,16 +54,17 @@ const ApplicationManagementTable = ({ applications }) => {
            {app.status}
           </span>
       </td>
-            <td>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log("Change Status", app);
-                }}
+           <td>
+            <select
+                value={app.status}
+                onClick={(e) => e.stopPropagation()} // Prevent row toggle
+                onChange={(e) => handleChangeStatus(app.id, e.target.value)}
               >
-                Change Status
-              </button>
-            </td>
+                <option value="Pending">Pending</option>
+                <option value="Interview">Interview</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+          </td> 
           </tr>
 
           {/* Accordion Row */}
@@ -61,8 +91,12 @@ const ApplicationManagementTable = ({ applications }) => {
                   </div>
                   <div className="accordion-actions">
                     <button className="btn view">View Profile</button>
-                    <button className="btn shortlist">Shortlist</button>
-                    <button className="btn reject">Reject</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleShortlist(app.id); }}>
+                Shortlist
+              </button>
+                     <button onClick={(e) => { e.stopPropagation(); handleReject(app.id); }}>
+                Reject
+              </button>
                   </div>
                 </div>
               </td>
