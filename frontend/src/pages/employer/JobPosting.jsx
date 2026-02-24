@@ -1,21 +1,25 @@
-// src/pages/Employer/PostJob.jsx
-import React, { useState } from "react";
+import  { useState } from "react";
+import{useLocation} from "react-router-dom";
 import "../../Styles/JobPosting.css";
+
 const PostJob = () => {
-  const [jobData, setJobData] = useState({
-    title: "",
-    type: "",
-    department: "",
-    location: "",
-    remote: false,
-    salaryMin: "",
-    salaryMax: "",
-    experience: "",
-    description: "",
-    responsibilities: "",
-    skills: [],
-    deadline: "",
-  });
+  const location = useLocation();
+  const jobToEdit = location.state?.jobToEdit;
+
+const [jobData, setJobData] = useState({
+  title: jobToEdit?.title || "",
+  type: jobToEdit?.type || "",
+  department: jobToEdit?.department || "",
+  location: jobToEdit?.location || "",
+  remote: jobToEdit?.remote || false,
+  salaryMin: jobToEdit?.salaryMin || "",
+  salaryMax: jobToEdit?.salaryMax || "",
+  experience: jobToEdit?.experience || "",
+  description: jobToEdit?.description || "",
+  responsibilities: jobToEdit?.responsibilities || "",
+  skills: jobToEdit?.skills || [],
+  deadline: jobToEdit?.deadline || "",
+});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -29,11 +33,16 @@ const PostJob = () => {
     setJobData({ ...jobData, skills: e.target.value.split(",") });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Job Posted:", jobData);
-    // API call here
-  };
+ const handleSubmit = (e) => {
+  e.preventDefault();
+  if (jobToEdit) {
+    console.log("Updating Job:", jobData);
+    // API call to update job using jobToEdit._id
+  } else {
+    console.log("Posting New Job:", jobData);
+    // API call to create new job
+  }
+};;
 
 
   return (
@@ -187,7 +196,7 @@ const PostJob = () => {
 
           <div className="form-actions">
             <button type="submit" className="btn-primary">
-              Post Job
+          {jobToEdit ? "Update Job" : "Post Job"}
             </button>
           </div>
         </form>
