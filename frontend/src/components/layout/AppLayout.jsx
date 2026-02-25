@@ -8,6 +8,9 @@ import "../../Styles/AppLayout.css";
 function AppLayout(){
     const location = useLocation();
     const{user} = useAuth(); 
+
+     if(!user) return null; 
+     
     const[isMobile,setIsMobile] = useState(false);
     const[isOpen,setIsOpen] = useState(true);
 
@@ -16,6 +19,10 @@ const getPageTitle=()=>{
      if (location.pathname === "/jobs") return "Browse Jobs";
      if(location.pathname==="/applications") return "My Applications";
      if (location.pathname.startsWith("/jobs/")) return "Job Details";
+     if(location.pathname==="/jobManage") return "Job Management";
+      if(location.pathname==="/appManage") return "Application Management";
+       if(location.pathname==="/jobPost") return "Job Posting";
+
       return "";
 }
  useEffect(()=>{

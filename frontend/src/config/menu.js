@@ -3,6 +3,10 @@ jobseeker:[
     {name:"Dashboard",link:"/dashboard"},
     {name:"My Applications",link:"/applications"},
     {name:"Browse Jobs",link:"/jobs"},
+    {name:"Job Management",link:"/jobManage"},
+    {name:"Application Management",link:"/appManage"},
+     {name:"Job Posting",link:"/jobPost"},
+
    
     
 ],
