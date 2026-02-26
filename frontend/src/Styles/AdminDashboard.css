@@ -1,0 +1,95 @@
+.admin-dashboard {
+  padding: 32px;
+  background: #f5f7fb;   /* softer than gray */
+  min-height: 100vh;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Main layout */
+.main-layout {
+  display: grid;
+grid-template-columns: 1.8fr 1.2fr;
+  gap: 24px;
+}
+
+/* Column stacking */
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Make QuickActions smaller */
+.right-column .quick-actions-card {
+  max-width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .main-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #eef1f6;   /* subtle border instead of heavy shadow */
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
+}
+
+.card-header {
+  margin-bottom: 16px;
+}
+
+.card-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.card-body {
+  width: 100%;
+}
+
+/* Reduce bar chart height */
+.small-chart {
+  height: 260px;
+}
+
+
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+}
