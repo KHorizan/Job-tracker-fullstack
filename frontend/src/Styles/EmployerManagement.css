@@ -1,0 +1,56 @@
+.employer-page {
+  padding: 20px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.page-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.pagination button.active {
+  background: #4f46e5;
+  color: white;
+  border: none;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.app-row button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.app-row button:hover {
+  background: #f3f4f6;
+}
