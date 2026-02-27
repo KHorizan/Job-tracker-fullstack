@@ -1,0 +1,122 @@
+/* ===== Layout Wrapper ===== */
+.jobseeker-settings {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.settings-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ===== Page Title ===== */
+.settings-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 30px;
+}
+
+/* ===== Card ===== */
+.settings-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 35px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  margin-bottom: 25px;
+}
+
+/* ===== Section Title ===== */
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #334155;
+}
+
+/* ===== Form Grid ===== */
+.settings-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.settings-form.full {
+  grid-template-columns: 1fr;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-group label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #64748b;
+}
+
+.settings-group input {
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.settings-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ===== Save Button ===== */
+.save-btn {
+  margin-top: 25px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.save-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* ===== Danger Section ===== */
+.danger-card {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+
+.danger-btn {
+  background: #ef4444;
+  margin-top: 15px;
+}
+
+.danger-btn:hover {
+  background: #dc2626;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .settings-form {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-card {
+    padding: 25px;
+  }
+
+  .settings-title {
+    font-size: 22px;
+  }
+}
