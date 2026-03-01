@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import axios from "axios";
+import  {useState} from "react";
+import api from "../../services/api";
 import "../../Styles/Register.css";
 
 
@@ -15,7 +15,7 @@ const handleSubmit= async(e)=> {
        e.preventDefault();
 
 try{
-  const res= await  axios.post("http://localhost:5000/api/auth/register",{
+  const res= await  api.post("/auth/register",{
        
          name:username,
          email,

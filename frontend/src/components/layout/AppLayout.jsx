@@ -21,7 +21,13 @@ const getPageTitle=()=>{
      if (location.pathname.startsWith("/jobs/")) return "Job Details";
      if(location.pathname==="/jobManage") return "Job Management";
       if(location.pathname==="/appManage") return "Application Management";
-       if(location.pathname==="/jobPost") return "Job Posting";
+    if(location.pathname==="/jobPost") return "Job Posting";
+    if(location.pathname==="/empManagement") return "Employer Management";
+    if(location.pathname==="/AdminJManagement") return "Job Management";
+    if(location.pathname==="/candManagement") return "Candidate Management";
+    if(location.pathname==="/AdminSettings") return "Settings";
+    if(location.pathname==="/EmpSettings") return "Settings";
+    if(location.pathname==="/JSettings") return "Settings";
 
       return "";
 }

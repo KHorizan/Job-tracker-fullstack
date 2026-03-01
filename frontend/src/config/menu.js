@@ -6,6 +6,14 @@ jobseeker:[
     {name:"Job Management",link:"/jobManage"},
     {name:"Application Management",link:"/appManage"},
      {name:"Job Posting",link:"/jobPost"},
+      {name:"Admin Dashboard",link:"/adminDashboard"},
+       {name:"Employer Management",link:"/empManagement"},
+        {name:"Admin JobManagement",link:"/AdminJManagement"},
+         {name:"Candidate Management",link:"/candManagement"},
+            {name:"ASettings",link:"/AdminSettings"},
+         {name:"ESettings",link:"/EmpSettings"},
+            {name:"JSettings",link:"/JSettings"},
+        
 
    
     

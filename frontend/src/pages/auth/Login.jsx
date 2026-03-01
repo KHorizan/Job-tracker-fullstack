@@ -1,5 +1,5 @@
-import React,{useState} from "react";
-import axios from "axios";
+import {useState} from "react";
+import api from "../../services/api";
 import "../../Styles/Login.css";
 
 function Login(){
@@ -13,7 +13,7 @@ function Login(){
     e.preventDefault();
 
     try{
-    const res = await axios.post("http://localhost:5000/api/auth/login",{
+    const res = await api.post("/auth/login",{
             email,
             password,
         });
